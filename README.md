@@ -1,6 +1,8 @@
 # fake-chokidar
-a solution for Chokidar over VirtualBox shared folders, mainly for projects
-using Webpack
+
+a solution for [Chokidar](https://github.com/paulmillr/chokidar) over VirtualBox
+shared folders, mainly for projects using [Webpack](http://webpack.github.io/)
+
 
 ## Why?
 
@@ -12,7 +14,7 @@ That's often also the case if you use Docker (ie. boot2docker / docker-machine).
 
 Tools like Webpack can be configured to listen for changes in the source code
 so that it reacts by processing the changed files again. Under the hood these
-tools usually use [Chokidar](chokidar).
+tools usually use [Chokidar](https://github.com/paulmillr/chokidar).
 
 The combination between Chokidar and VirtualBox shared folders is a bad one,
 because VirtualBox does not pass file change events between host and guest and
@@ -73,8 +75,8 @@ Again, replace `12345` with the port you choose above.
 
 ### while coding
 
-Download the current release of `fake-chokidar-sender` and keep the program
-running in the background, like so:
+Download the current release of [fake-chokidar-sender](https://github.com/jampy/fake-chokidar-sender/releases)
+and keep the program running in the background, like so:
 
 ```
 fake-chokidar-sender --port 12345 .:/src
