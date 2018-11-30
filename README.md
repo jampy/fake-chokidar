@@ -3,6 +3,10 @@
 a solution for [Chokidar](https://github.com/paulmillr/chokidar) over VirtualBox
 shared folders, mainly for projects using [Webpack](http://webpack.github.io/)
 
+```
+[![NPM](https://nodei.co/npm/fake-chokidar.png)](https://npmjs.org/package/fake-chokidar)
+```
+
 
 ## Why?
 
