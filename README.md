@@ -88,7 +88,7 @@ See the [fake-chokidar-sender](https://github.com/jampy/fake-chokidar-sender)
 page for more details.
 
 
-## other solutions
+## Other solutions
 
 - you can simply instruct Chokidar to use polling (`CHOKIDAR_USEPOLLING=1`
   environment variable), but that can cause high CPU levels for large projects;
@@ -104,6 +104,6 @@ page for more details.
  machines in parallel.
 
 
-## licence
+## Licence
 
 MIT
