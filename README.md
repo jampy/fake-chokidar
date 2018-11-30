@@ -92,7 +92,7 @@ page for more details.
 
 - you can simply instruct Chokidar to use polling (`CHOKIDAR_USEPOLLING=1`
   environment variable), but that can cause high CPU levels for large projects;
-  see also see also https://blog.codecentric.de/en/2017/08/fix-webpack-watch-virtualbox/
+  see also https://blog.codecentric.de/en/2017/08/fix-webpack-watch-virtualbox/
 
 - [notify-forwarder](https://github.com/mhallin/notify-forwarder) looked
   promising, but didn't work for me. It also forwards file events via UDP but
