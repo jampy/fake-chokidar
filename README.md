@@ -56,8 +56,8 @@ require("fake-chokidar").inject({
 });
 ```
 
-You can choose whatever port you like, but you must configure Docker and your
-virtual machine so that the port is forwarded.
+You can choose whatever port you like, but you must configure Docker **and**
+your virtual machine so that the port is forwarded.
 
 
 ### on your development machine
