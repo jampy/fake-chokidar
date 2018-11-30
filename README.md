@@ -72,7 +72,7 @@ For **VirtualBox** you can do this via the GUI or by running this command once
 VBoxManage modifyvm boot2docker-vm --natpf1 "portfwd-12345,udp,,12345,,12345"
 ```
 
-Again, replace `12345` with the port you choose above.
+Again, replace `12345` with the port you chose above.
 
 
 ### while coding
@@ -84,7 +84,8 @@ and keep the program running in the background, like so:
 fake-chokidar-sender --port 12345 .:/src
 ```
 
-See the `fake-chokidar-sender` page for more details.
+See the [fake-chokidar-sender](https://github.com/jampy/fake-chokidar-sender)
+page for more details.
 
 
 ## other solutions
