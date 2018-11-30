@@ -1,0 +1,23 @@
+{
+  "name": "fake-chokidar",
+  "version": "0.0.1",
+  "description": "a solution for Chokidar over VirtualBox shared folders",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jampy/fake-chokidar.git"
+  },
+  "keywords": [
+    "webpack",
+    "chokidar"
+  ],
+  "author": "Udo Giacomozzi",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/jampy/fake-chokidar/issues"
+  },
+  "homepage": "https://github.com/jampy/fake-chokidar#readme"
+}
