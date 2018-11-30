@@ -43,7 +43,9 @@ guest, by monkeypatching it in the NodeJS process that's using it.
 
 Add `fake-chokidar` as a devDependency to your project:
 
-`npm i --save-dev fake-chokidar`
+```
+npm i --save-dev fake-chokidar
+```
 
 
 Then at the very top of your `webpack.config.js` add this code:
