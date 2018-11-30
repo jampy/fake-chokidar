@@ -1,15 +1,13 @@
-const PORT = 53999;
-const HOST = '0.0.0.0';
-
 const dgram = require('dgram');
-const server = dgram.createSocket('udp4');
 const fs = require("fs");
 
 
-const chokidar = require("chokidar");  // altough no dependency!
-
 let watches = [];
 
+// fake-chokidar was made specifically for Webpack and the options used by it.
+// The following watch() options are what fake-chokidar expects. It should
+// be possible to allow different options, but these would need to be
+// implemented first, of course.
 const expectedOpts = {
   ignoreInitial: true,
   persistent: true,
@@ -23,12 +21,100 @@ const expectedOpts = {
 };
 
 
-const supportedEvents = [
-  "add", "addDir", "change", "unlink", "unlinkDir", "error"
-];
+/**
+ * Tweaks the "chokidar" module by replacing it's watch() method.
+ *
+ * This must be called at the very beginning of the program, ie. at the top
+ * of your webpack.config.js
+ *
+ * Available options:
+ *
+ * `port`: UDP port to listen for events. Defaults to 49494 but you might
+ * want to choose a specific port. The port number must match the one used
+ * by `fake-chokidar-sender`.
+ *
+ * `host`: Host to bind the UDP event server on. Defaults to '0.0.0.0' (all
+ * interfaces) and should be fine for normal situations.
+ *
+ * `chokidar`: Reference to the 'chokidar' module. If not given, default
+ * Chokidar is used. Normally there is no need to use this option.
+ *
+ *
+ * @param options
+ */
+exports.inject = function(options) {
+
+  options = options || {};
+
+  // NB: "chokidar" is *not* in our package.json
+  const chokidar = options.chokidar || require("chokidar");
+  const port = options.port || 49494;
+  const host = options.host || "0.0.0.0";
+
+  const server = dgram.createSocket('udp4');
+
+  server.on('message', function (message, remote) {
+
+    try {
+
+      handleMessage(message);
+
+    } catch (e) {
+
+      console.log("fake-chokidar error in 'message' handler:", e);
+
+    }
+
+  });
 
 
-chokidar.watch = function(path, opts) {
+  server.bind(port, host);
+
+  chokidar.watch = function(path, opts) {
+
+    checkWatchParameters(path, opts);
+
+    const listeners = [];
+    const myWatch = { listeners };
+
+    watches.push(myWatch);
+
+    return {
+
+      on: (event, func) => {
+
+        listeners.push({
+          path,
+          opts,
+          event,
+          func,
+        });
+
+      },
+
+      close: () => {
+
+        watches = watches.filter(x => x !== myWatch);
+
+      }
+    };
+
+  };
+
+
+};
+
+
+/**
+ * Checks whether the given watch() parameters are valid for this Chokidar
+ * emulation.
+ *
+ * Throws exceptions when it finds unusual settings.
+ *
+ * @param path
+ * @param opts
+ */
+function checkWatchParameters(path, opts) {
 
   if (typeof path !== "string")
     throw new Error("first argument expected to be a string");
@@ -43,54 +129,14 @@ chokidar.watch = function(path, opts) {
 
   }
 
-  const listeners = [];
-
-  const myWatch = { listeners };
-
-  watches.push(myWatch);
-
-  return {
-
-    on: (event, func) => {
-
-      if (supportedEvents.indexOf(event) < 0)
-        throw new Error("Event '" + event + "' not supported by Fake Chokidar");
-
-      listeners.push({
-        path,
-        opts,
-        event,
-        func,
-      });
-
-    },
-
-    close: () => {
-
-      watches = watches.filter(x => x !== myWatch);
-
-    }
-  };
-
-};
+}
 
 
-
-server.on('message', function (message, remote) {
-
-  try {
-
-    handleMessage(message);
-
-  } catch (e) {
-
-    console.log("Fake Chokidar error in 'message' handler:", e);
-
-  }
-
-});
-
-
+/**
+ * Handles a message received from fake-chokidar-sender.
+ *
+ * @param message - Raw UDP message.
+ */
 function handleMessage(message) {
 
   const payload = JSON.parse(message);
@@ -98,7 +144,7 @@ function handleMessage(message) {
 
   const basePath = path.substring(0, path.lastIndexOf("/"));
 
-  //console.log(payload)
+  console.log(payload)
 
   watches.forEach(({listeners}) => {
 
@@ -115,17 +161,16 @@ function handleMessage(message) {
 }
 
 
+/**
+ * Calls all registered Chokidar listeners matching the event.
+ *
+ * @param listener
+ * @param event
+ * @param path
+ */
 function invokeListener(listener, event, path) {
 
-  //console.log("INVOKE", event, "FOR", path /* , "-->", listener */)
-
-  const call = stat => {
-
-    //console.log(event, " @@ ", path, stat)
-
-    listener.func(path, stat);
-
-  };
+  const call = stat => listener.func(path, stat);
 
 
   if (['add', 'addDir','change'].indexOf(event) >= 0) {
@@ -150,15 +195,3 @@ function invokeListener(listener, event, path) {
 
 }
 
-
-function getRelPath(listener, path) {
-
-  if (path.substr(0, listener.path.length) !== listener.path)
-    throw new Error("relPath wrong prefix (expected '" + listener.path + "' in '" + path + "')");
-
-  return path.substr(listener.path.length + 1);
-
-}
-
-
-server.bind(PORT, HOST);
