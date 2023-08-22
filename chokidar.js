@@ -125,7 +125,7 @@ function handleMessage(message) {
 
   const basePath = path.substring(0, path.lastIndexOf("/"));
 
-  console.log(payload)
+  console.log(payload);
 
   watches.forEach(({listeners}) => {
 

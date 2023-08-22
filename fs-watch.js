@@ -55,6 +55,8 @@ const origWatch = fs.watch;
 
 exports.injectFsWatch = function(options) {
 
+  const { debug } = options || {};
+
   const watchers = [];
 
   if (fs.watch !== origWatch)
@@ -67,7 +69,8 @@ exports.injectFsWatch = function(options) {
 
     const [ dir, fn ] = splitDirFn(path);
 
-    //console.log("+++ handleMessage:", event, path, "//", {dir, fn});
+    if (debug)
+      console.log("+++", event, path, `(${watchers.length})`);
 
     for (const { watchFn, handle } of watchers) {
 
