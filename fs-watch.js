@@ -75,9 +75,9 @@ exports.injectFsWatch = function(options) {
 
         const fswEvent = ['add', 'change'].includes(event) ? 'change' : 'rename';
 
-        //console.log(" ... match", watchFn, ":", fswEvent, fn)
+        //console.log(" ... match", watchFn, "-->", fswEvent, fn)
 
-        handle.emit(fswEvent, fn);
+        handle.emit('change', fswEvent, fn);
 
       }
 
