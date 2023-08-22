@@ -15,7 +15,9 @@ That's often also the case if you use Docker (ie. boot2docker / docker-machine).
 
 Tools like Webpack can be configured to listen for changes in the source code
 so that it reacts by processing the changed files again. Under the hood these
-tools usually use [Chokidar](https://github.com/paulmillr/chokidar).
+tools usually use [Chokidar](https://github.com/paulmillr/chokidar) and 
+newer versions use [watchpack](https://github.com/webpack/watchpack) which 
+internally relies on [`fs.watch()`](https://nodejs.org/docs/latest/api/fs.html#fswatchfilename-options-listener).
 
 The combination between Chokidar and VirtualBox shared folders is a bad one,
 because VirtualBox does not pass file change events between host and guest and
@@ -33,10 +35,11 @@ the problem on a higher level.
 The principle and implementation is rather simple. A separate NodeJS process is
 started *on the host* (for example Windows), using itself Chokidar to detect
 file changes. These events are forwarded as UDP packets *to the guest* where
-they are restored as typical Chokidar events.
+they are restored as typical Chokidar or `fs.watch()` events.
 
 To make this possible, the *Chokidar* mechanism is completely *replaced* in the
-guest, by monkeypatching it in the NodeJS process that's using it.
+guest, by monkeypatching it in the NodeJS process that's using it. The same 
+applies for `fs.watch()`.
 
 ## How to use
 
@@ -49,7 +52,16 @@ npm i --save-dev fake-chokidar
 ```
 
 
-Then at the very top of your `webpack.config.js` add this code:
+Then at the very top of your `webpack.config.js` add this code for Webpack 2+:
+
+```
+require("fake-chokidar").injectFsWatch({
+  port: 12345
+});
+```
+
+
+Or, if you are still using Webpack v1:
 
 ```
 require("fake-chokidar").inject({
