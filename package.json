@@ -1,6 +1,6 @@
 {
   "name": "fake-chokidar",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "a solution for Chokidar over VirtualBox shared folders",
   "main": "index.js",
   "scripts": {
